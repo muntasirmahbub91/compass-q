@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus, CheckCircle2, Trash2, Inbox, CornerUpLeft, Pencil } from "lucide-react";
+import { Plus, CheckCircle2, Trash2, Inbox, Pencil } from "lucide-react";
 
 const STORAGE_KEY = "compassq-data-v1";
 const URGENT_THRESHOLD_HOURS = 24;
@@ -172,6 +172,7 @@ const EditTaskModal=({open,onClose,task,onSave})=>{
   );
 };
 
+/* TASK CARD — smaller visual footprint */
 const TaskCard=React.memo(({task,selected,provided,snapshot,setSelectedId,onEdit,nowTs})=>(
   <div
     ref={provided.innerRef}
@@ -184,8 +185,8 @@ const TaskCard=React.memo(({task,selected,provided,snapshot,setSelectedId,onEdit
   >
     <div className="flex items-center justify-between gap-2">
       <div className="min-w-0">
-        <div className="font-medium truncate">{task.title}</div>
-        <div className="text-[10px] text-neutral-600">{task.important?"Important":"Not important"} • {taskRemainingLabel(task,nowTs)}</div>
+        <div className="font-medium truncate text-sm">{task.title}</div>
+        <div className="text-[9px] text-neutral-600">{task.important?"Important":"Not important"} • {taskRemainingLabel(task,nowTs)}</div>
       </div>
     </div>
   </div>
@@ -236,7 +237,15 @@ html,body,#root{height:100%}
 .q-ii.qpanel{background-color:var(--q2-bg);border-left:4px solid var(--q2-accent)}
 .q-iii.qpanel{background-color:var(--q3-bg);border-left:4px solid var(--q3-accent)}
 .q-iv.qpanel{background-color:var(--q4-bg);border-left:4px solid var(--q4-accent)}
-.plate{border-radius:20px;padding:10px 12px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.78));border:1px solid rgba(0,0,0,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 12px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06)}
+
+/* TASK CARD — ~40% smaller (only cards, not quadrants) */
+.plate{
+  border-radius:14px;
+  padding:6px 8px;
+  background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.78));
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 4px 8px rgba(0,0,0,.10),0 1px 2px rgba(0,0,0,.06);
+}
 .q-i .plate{border-left:4px solid var(--q1-accent)}
 .q-ii .plate{border-left:4px solid var(--q2-accent)}
 .q-iii .plate{border-left:4px solid var(--q3-accent)}
@@ -399,7 +408,6 @@ export default function App(){
   function deleteFromArchive(id){ setData(prev=>({...prev,archived:prev.archived.filter(x=>x.id!==id)})); }
 
   const grid=(
-    // FORCE 2x2 ALWAYS (mobile too) + lock height to 100dvh under the top bar
     <div className="grid grid-cols-2 grid-rows-2 gap-3 md:gap-4 p-3 md:p-4 h-[calc(100dvh-56px)] md:h-[calc(100dvh-64px)]">
       <Quadrant id={Q1} title={QUADRANT_META[Q1].title} items={tasksByQuadrant[Q1]} selectedId={selectedId} setSelectedId={setSelectedId} onEdit={handleOpenEditor}/>
       <Quadrant id={Q2} title={QUADRANT_META[Q2].title} items={tasksByQuadrant[Q2]} selectedId={selectedId} setSelectedId={setSelectedId} onEdit={handleOpenEditor}/>
